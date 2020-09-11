@@ -13,12 +13,11 @@ export default class SwipableFlatList extends React.Component {
     }
   }
   onSwipeValueChange = swipeData => {
-    /** Comment Comment// */
-    /dipam/;
+
   }
   render() {
+    return (
 
+    );
   }
 }
-
-
