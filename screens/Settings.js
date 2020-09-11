@@ -30,7 +30,7 @@ export default class SettingsScreen extends React.Component {
           firstName: userData.firstName,
           emailID: userData.email,
           lastName: userData.lastName,
-          contactNo: userData.contactNo,
+          contactNo: userData.contact,
           address: userData.address,
           docID: doc.id
         })
@@ -41,7 +41,7 @@ export default class SettingsScreen extends React.Component {
     db.collection("users").doc(this.state.docID).update({
       firstName: this.state.firstName,
       lastName: this.state.lastName,
-      contactNo: this.state.contactNo,
+      contact: this.state.contactNo,
       address: this.state.address
     })
     Alert.alert("Profile Updated Successfully");

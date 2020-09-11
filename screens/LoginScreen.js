@@ -17,6 +17,11 @@ export default class Login extends React.Component {
       isModalVisible: false
     }
   }
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) this.props.navigation.navigate("Donate Books")
+    })
+  }
   render() {
     return (
       <View style={styles.container}>

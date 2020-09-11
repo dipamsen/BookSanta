@@ -6,12 +6,14 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import AppTabNavigator from './AppTabNavigator';
 import MyDonations from '../screens/MyDonations'
 import SettingsScreen from '../screens/Settings';
+import Notifications from '../screens/Notifications'
 import SideBar from './CustomSideBar';
 
 const DrawerNavigator = createDrawerNavigator({
   Home: { screen: AppTabNavigator },
   "My Donations": { screen: MyDonations },
-  Settings: { screen: SettingsScreen }
+  Notifications: { screen: Notifications },
+  Settings: { screen: SettingsScreen },
 }, {
   contentComponent: SideBar,
   initialRouteName: "Home"

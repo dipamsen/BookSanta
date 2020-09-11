@@ -11,15 +11,19 @@ export default class ReceiverDetails extends React.Component {
     super(props);
     this.state = {
       userID: firebase.auth().currentUser.email,
-      receiverID: this.props.navigation.getParams("details")["email"],
-      requestID: this.props.navigation.getParams("details")["id"],
-      bookName: this.props.navigation.getParams("details")["bookName"],
-      reason: this.props.navigation.getParams("details")["reason"],
+      receiverID: this.props.navigation.getParam("details")["email"],
+      requestID: this.props.navigation.getParam("details")["id"],
+      bookName: this.props.navigation.getParam("details")["bookName"],
+      reason: this.props.navigation.getParam(
+        "details")["reason"],
       receiverName: '',
       receiverContact: '',
       receiverAddress: '',
       receiverRequestDocID: '',
     }
+  }
+  componentDidMount() {
+    this.fetchReceiverData()
   }
   fetchReceiverData = () => {
     db.collection("users").where("email", "==", this.state.receiverID).get().then(snapshot => {
@@ -27,7 +31,7 @@ export default class ReceiverDetails extends React.Component {
         let data = doc.data()
         this.setState({
           receiverName: data.firstName,
-          receiverContact: data.contactNo,
+          receiverContact: data.contact,
           receiverAddress: data.address,
         })
       })
@@ -61,7 +65,8 @@ export default class ReceiverDetails extends React.Component {
           {this.state.userID !== this.state.receiverID ? (
             <TouchableOpacity onPress={() => {
               this.updateBookStatus();
-              this.props.navigation.navigate("MyDonations")
+              this.addNotifications()
+              this.props.navigation.navigate("My Donations")
             }}>
               <Text>I want to Donate!</Text>
             </TouchableOpacity>
@@ -71,12 +76,24 @@ export default class ReceiverDetails extends React.Component {
     )
   }
   updateBookStatus = () => {
-    db.collecion("donations").add({
+    db.collection("donations").add({
       bookName: this.state.bookName,
       donorID: this.state.userID,
       requestID: this.state.requestID,
       status: "Donor Interested",
       requestedBy: this.state.receiverName
+    });
+
+  }
+  addNotifications = () => {
+    let message = this.state.userID + " is interested to donate!"
+    db.collection("notifications").add({
+      donorID: this.state.userID,
+      receiverID: this.state.receiverID,
+      bookName: this.state.bookName,
+      date: firebase.firestore.FieldValue.serverTimestamp(),
+      status: "unread",
+      message: message
     })
   }
 }

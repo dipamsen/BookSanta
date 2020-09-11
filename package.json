@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@firebase/firestore": "^1.16.4",
+    "@react-native-community/masked-view": "^0.1.10",
     "expo": "^38.0.9",
     "expo-status-bar": "^1.0.2",
     "firebase": "^7.18.0",

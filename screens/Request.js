@@ -31,7 +31,9 @@ export default class RequestScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <MyHeader title="Request Books!" />
+        <MyHeader
+          title="Request Books!"
+          navigation={this.props.navigation} />
         <KeyboardAvoidingView style={styles.container}>
           <TextInput
             placeholder="Book Name"
