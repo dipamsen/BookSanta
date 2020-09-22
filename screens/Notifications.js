@@ -3,8 +3,9 @@ import React from 'react';
 import { View, Text, FlatList } from 'react-native'
 import { ListItem, Icon } from 'react-native-elements';
 import MyHeader from '../components/Header'
-import db from '../config';
-import firebase from 'firebase'
+import SwipableNotifications from '../components/SwipableFlatList'
+import firebase from 'firebase';
+import db from '../config'
 
 export default class Notifications extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class Notifications extends React.Component {
     db.collection('notifications').where("status", "==", "unread").where("receiverID", "==", this.state.userID).onSnapshot(snapshot => {
       let notifications = [];
       snapshot.docs.map(doc => {
-        notifications.push(doc.data());
+        notifications.push({ ...doc.data(), id: doc.id });
       })
       this.setState({ notifications })
     })
@@ -45,13 +46,12 @@ export default class Notifications extends React.Component {
           this.state.notifications.length == 0 ?
             (<Text>No Notifications!</Text>) :
             (
-              <FlatList
-                data={this.state.notifications}
-                keyExtractor={this.keyExtractor}
-                renderItem={this.renderItem}
+              <SwipableNotifications
+                notifications={this.state.notifications}
               />
             )
         }
+
       </View>
     )
   }

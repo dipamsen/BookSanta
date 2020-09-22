@@ -18,9 +18,14 @@ export default class Login extends React.Component {
     }
   }
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) this.props.navigation.navigate("Donate Books")
+    this.listener = firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.props.navigation.navigate("Donate Books")
+      }
     })
+  }
+  componentWillUnmount() {
+    this.listener && this.listener()
   }
   render() {
     return (
@@ -142,17 +147,20 @@ export default class Login extends React.Component {
       return;
     } else {
       firebase.auth().createUserWithEmailAndPassword(email, password).then((response) => {
-        return Alert.alert("User added successfully")
+        db.collection("users").add({
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          email: this.state.username,
+          contact: this.state.contactNo,
+          address: this.state.address,
+          bookRequested: false
+        }).then(() => {
+          return Alert.alert("User added successfully")
+        });
       }).catch((err) => {
         Alert.alert("Error", err.message);
       })
-      db.collection("users").add({
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        email: this.state.username,
-        contact: this.state.contactNo,
-        address: this.state.address
-      })
+
     }
   }
 }

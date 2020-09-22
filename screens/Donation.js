@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 
 import db from '../config';
 import firebase from 'firebase';
@@ -39,6 +39,17 @@ export default class DonationScreen extends React.Component {
         titleStyle={{
           color: "red"
         }}
+        leftElement={
+          <Image
+            source={{
+              uri: item.imageLink
+            }}
+            style={{
+              width: 80,
+              height: 80
+            }}
+          />
+        }
         rightElement={
           <TouchableOpacity onPress={() => {
             this.props.navigation.navigate("ReceiverDetails", {
@@ -55,7 +66,7 @@ export default class DonationScreen extends React.Component {
   render() {
     return (
       <View>
-        <MyHeader title="Donate Books" />
+        <MyHeader title="Donate Books" navigation={this.props.navigation} />
         <View>
           {this.state.requestedBookList.length == 0 ? (
             <View>
