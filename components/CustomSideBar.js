@@ -28,15 +28,13 @@ export default class Drawer extends React.Component {
       quality: 1
     })
     if (!cancelled) {
-      console.log("Not cancelled")
       this.uploadImage(uri, this.state.userID)
     }
   }
   uploadImage = async (uri, id) => {
     let response = await fetch(uri);
     let blob = await response.blob();
-    console.log(uri)
-    let ref = firebase.storage().ref().child("userProfile/dipam");
+    let ref = firebase.storage().ref().child("userProfile/" + id);
     ref.put(blob).then(response => {
       console.log(response)
       alert("Photo has been uploaded")
@@ -44,9 +42,10 @@ export default class Drawer extends React.Component {
     }).catch(err => alert(err.message))
   }
   fetchImage = (id) => {
-    let ref = firebase.storage().ref().child("userProfile/dipam").getDownloadURL().then(url => {
+    let ref = firebase.storage().ref().child("userProfile/" + id).getDownloadURL().then(url => {
       this.setState({ image: url })
     }).catch(err => {
+      console.log(err)
       this.setState({ image: "#" })
     })
   }
@@ -63,23 +62,25 @@ export default class Drawer extends React.Component {
   }
   render() {
     return (
-      <View style={{ marginTop: 20 }}>
-        <Text style={{ marginTop: 8, fontSize: 20, textAlign: 'center' }}>
-          BookSanta!</Text>
+      <View style={{ marginTop: 40 }}>
+        <Text style={{ marginTop: 8, fontSize: 40, textAlign: 'center' }}>
+          Book Santa!</Text>
 
         <Avatar
           rounded
           source={{ uri: this.state.image }}
-          size="medium"
-          onPress={this.choosePicture}
+          size="xlarge"
+          title="DS"
+          onAccessoryPress={this.choosePicture}
           showEditButton
+          showAccessory
           containerStyle={{
             margin: 20,
             alignSelf: 'center',
-            borderRadius: 30
+            borderWidth: 1
           }}
         />
-        <Text style={{ fontSize: 20, textAlign: 'center' }}>
+        <Text style={{ fontSize: 24, textAlign: 'center' }}>
           {this.state.name}
         </Text>
         <DrawerItems {...this.props} />

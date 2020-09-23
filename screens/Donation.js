@@ -17,9 +17,9 @@ export default class DonationScreen extends React.Component {
     this.requestRef = null;
   }
   fetchData = () => {
-    this.requestRef = db.collection("requests");
+    this.requestRef = db.collection("requests").where("status", "==", "requested");
     this.requestRef.onSnapshot(snapshot => {
-      let data = snapshot.docs.map(document => document.data());
+      let data = snapshot.docs.map(document => document.data()).sort((a, b) => a.date.toDate() - b.date.toDate());
       this.setState({ requestedBookList: data })
     })
   };
@@ -45,8 +45,8 @@ export default class DonationScreen extends React.Component {
               uri: item.imageLink
             }}
             style={{
-              width: 80,
-              height: 80
+              width: 50,
+              height: 70
             }}
           />
         }
@@ -70,7 +70,7 @@ export default class DonationScreen extends React.Component {
         <View>
           {this.state.requestedBookList.length == 0 ? (
             <View>
-              <Text>List of All Requested Books</Text>
+              <Text style={{ fontSize: 20, textAlign: "center" }}>No Active Requests Found !</Text>
             </View>
           ) : (
               <FlatList

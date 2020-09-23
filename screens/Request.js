@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, TextInput, KeyboardAvoidingView, TouchableOpacity, Alert, Text, StyleSheet, FlatList } from 'react-native';
+import { View, TextInput, KeyboardAvoidingView, TouchableOpacity, Alert, Text, StyleSheet, FlatList, TouchableHighlight } from 'react-native';
 
 import MyHeader from '../components/Header';
-
+import { ListItem } from "react-native-elements"
 import firebase from 'firebase';
 import db from '../config'
 import BookSearch from 'react-native-google-books/BookSearch';
@@ -37,7 +37,7 @@ export default class RequestScreen extends React.Component {
     let email = this.state.user;
     let id = this.createUniqueID();
     let books = await BookSearch.searchbook(bookName, API_KEY)
-    db.collection("requestedBooks").add({
+    db.collection("requests").add({
       bookName: bookName,
       reason: reason,
       email: email,
@@ -78,30 +78,49 @@ export default class RequestScreen extends React.Component {
         dataSource: books.data,
         showFlatList: true
       })
-
+      console.log(books.data[0])
+    } else {
+      this.setState({
+        dataSource: "",
+        showFlatList: false
+      })
     }
   }
-  renderItem = (item, i) => {
-    let obj = {
+  // The error:  
+  // renderItem = (item, i) => {
+
+  // The solution: 
+  renderItem = ({ item, index }) => {
+    let book = {
       title: item.volumeInfo.title,
       selfLink: item.selfLink,
       buyLink: item.saleInfo.buyLink,
       imageLink: item.volumeInfo.imageLinks
     }
-    console.log(item.volumeInfo)
+    const title = book.title.length > 42 ? book.title.slice(0, 50) + "..." : book.title
     return (
-      <TouchableHighlight
-        style={styles.option}
-        activeOpacity={0.5}
+      // <TouchableHighlight
+      //   style={styles.option}
+      //   activeOpacity={0.5}
+      //   onPress={() => {
+      //     this.setState({
+      //       showFlatList: false,
+      //       bookName: book.title
+      //     })
+      //   }}
+      // >
+      //   <Text>{book.title}</Text>
+      // </TouchableHighlight>
+      <ListItem
+        style={{ height: 40 }}
+        title={title}
         onPress={() => {
           this.setState({
             showFlatList: false,
-            bookName: "Dummy" //item.volumeInfo.title
+            bookName: book.title
           })
         }}
-      >
-        <Text>{item.volumeInfo.title || "jshssj"}</Text>
-      </TouchableHighlight>
+      />
     )
   }
   sendNotification = () => {
@@ -125,7 +144,7 @@ export default class RequestScreen extends React.Component {
     })
   }
   getBookRequest = () => {
-    const requestedBooks = db.collection("requestedBooks").where("email", "==", this.state.user).onSnapshot(snapshot => {
+    const requestedBooks = db.collection("requests").where("email", "==", this.state.user).onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         if (doc.data().status !== "received") {
           this.setState({
@@ -149,7 +168,7 @@ export default class RequestScreen extends React.Component {
     })
   }
   updateRequestStatus = () => {
-    db.collection("requestedBooks").doc(this.state.docID).update({
+    db.collection("requests").doc(this.state.docID).update({
       status: 'received'
     })
     db.collection("users").where("email", "==", this.state.user).get().then(snapshot => {
@@ -176,6 +195,9 @@ export default class RequestScreen extends React.Component {
               this.sendNotification();
               this.updateRequestStatus();
               this.receiveBook(this.state.bookName)
+              this.setState({
+                bookName: ""
+              })
             }}>
             <Text>I received the book!</Text>
           </TouchableOpacity>

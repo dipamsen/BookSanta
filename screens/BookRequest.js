@@ -35,7 +35,7 @@ export default class CurrentBookRequestScreen extends Component {
   addRequest = async (bookName, reason) => {
     let email = this.state.user
     let randomID = this.createRandomID();
-    db.collection("requestedBooks").add({
+    db.collection("requests").add({
       user: email,
       bookName: bookName,
       reason: reason,
@@ -86,7 +86,7 @@ export default class CurrentBookRequestScreen extends Component {
     })
   }
   getBookRequest = () => {
-    const rb = db.collection("requestedBooks").where("user", "==", this.state.user).get().then(snapshot => {
+    const rb = db.collection("requests").where("user", "==", this.state.user).get().then(snapshot => {
       snapshot.forEach(doc => {
         if (doc.data().status !== "received") {
           this.setState({
@@ -110,7 +110,7 @@ export default class CurrentBookRequestScreen extends Component {
     })
   }
   updateRequestStatus = () => {
-    db.collection("requestedBooks").doc(this.state.docID).update({
+    db.collection("requests").doc(this.state.docID).update({
       status: 'received'
     })
     db.collection("users").where("email", "==", this.state.user).get().then(snapshot => {
